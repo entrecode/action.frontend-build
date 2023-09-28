@@ -1,0 +1,80 @@
+name: Frontend Build-Action
+description: 'build and push to s3'
+
+inputs:
+  PAT:
+    description: 'PAT from repo'
+    required: true
+  NODE_VERSION:
+    description: 'node version'
+    required: false
+    default: 'latest'
+  WORKING_DIRECTORY:
+    description: 'working directory'
+    required: true
+    default: ''
+  BUCKET_NAME:
+    description: 'bucket name'
+    required: true
+
+outputs:
+  bucket_name: 
+    description: 'bucket_name'
+    value: ${{ steps.bucket_name.outputs.bucket_name }}
+
+runs:
+  using: 'composite'
+  steps:
+  - name: Checkout code
+    uses: actions/checkout@v3
+
+  - name: Use Node.js ${{ inputs.NODE_VERSION }}
+    uses: actions/setup-node@v3
+    with:
+      node-version: ${{ inputs.NODE_VERSION }}
+      cache: 'npm'
+
+  - name: Authenticate with private NPM package
+    run: |
+      echo "@entrecode:registry=https://npm.pkg.github.com/" > $GITHUB_WORKSPACE/.npmrc
+      echo "//npm.pkg.github.com/:_authToken=${{ inputs.PAT }}" > $GITHUB_WORKSPACE/.npmrc
+    shell: bash
+
+  - name: Install Dependencies
+    run: npm ci --prefer-offline --no-audit --quiet
+    working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
+    shell: bash
+
+  - name: Build stage
+    if: github.ref == 'refs/heads/develop'
+    id: build_stage
+    env:
+      NODE_OPTIONS: '--max_old_space_size=4096'
+    run: |
+      npm run staging
+      echo "::set-output name=bucket_name::${{ inputs.BUCKET_NAME }}-stage"
+    working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
+    shell: bash
+    
+  - name: Build prod
+    if: github.ref != 'refs/heads/develop'
+    id: build_prod
+    env:
+      NODE_OPTIONS: '--max_old_space_size=4096'
+    run: |
+      npm run production
+      echo "::set-output name=bucket_name::${{ inputs.BUCKET_NAME }}-prod"
+    working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
+    shell: bash
+
+  - name: Create Bucket Name Output
+    id: bucket_name
+    run: echo "bucket_name=${{ steps.build_stage.outputs.bucket_name || steps.build_prod.outputs.bucket_name }}" >> $GITHUB_OUTPUT
+    shell: bash
+
+  - name: Upload build artifact
+    uses: actions/upload-artifact@v3
+    with:
+      name: dist
+      path: ${{ github.workspace }}/apps/${{ inputs.WORKING_DIRECTORY }}/dist/
+      retention-days: 2
