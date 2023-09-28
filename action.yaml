@@ -16,6 +16,10 @@ inputs:
   BUCKET_NAME:
     description: 'bucket name'
     required: true
+  OUTPUT_PATH:
+    description: 'output path'
+    required: false
+    default: 'dist'
 
 outputs:
   bucket_name: 
@@ -75,6 +79,6 @@ runs:
   - name: Upload build artifact
     uses: actions/upload-artifact@v3
     with:
-      name: dist
-      path: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}/dist/
+      name: build_result
+      path: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}/${{ inputs.OUTPUT_PATH }}/
       retention-days: 2
