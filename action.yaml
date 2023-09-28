@@ -56,7 +56,8 @@ runs:
       NODE_OPTIONS: '--max_old_space_size=4096'
     run: |
       npm run staging
-      echo "::set-output name=bucket_name::${{ inputs.BUCKET_NAME }}-stage"
+      echo "bucket_name=${{ inputs.BUCKET_NAME }}-stage" >> $GITHUB_OUTPUT
+
     working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
     shell: bash
     
@@ -67,7 +68,8 @@ runs:
       NODE_OPTIONS: '--max_old_space_size=4096'
     run: |
       npm run production
-      echo "::set-output name=bucket_name::${{ inputs.BUCKET_NAME }}-prod"
+      echo "bucket_name=${{ inputs.BUCKET_NAME }}-prod" >> $GITHUB_OUTPUT
+
     working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
     shell: bash
 
