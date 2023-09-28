@@ -76,5 +76,5 @@ runs:
     uses: actions/upload-artifact@v3
     with:
       name: dist
-      path: ${{ github.workspace }}/apps/${{ inputs.WORKING_DIRECTORY }}/dist/
+      path: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}/dist/
       retention-days: 2
