@@ -30,10 +30,10 @@ runs:
   using: 'composite'
   steps:
   - name: Checkout code
-    uses: actions/checkout@v3
+    uses: actions/checkout@v4
 
   - name: Use Node.js ${{ inputs.NODE_VERSION }}
-    uses: actions/setup-node@v3
+    uses: actions/setup-node@v4
     with:
       node-version: ${{ inputs.NODE_VERSION }}
       cache: 'npm'
@@ -79,7 +79,7 @@ runs:
     shell: bash
 
   - name: Upload build artifact
-    uses: actions/upload-artifact@v3
+    uses: actions/upload-artifact@v4
     with:
       name: build_result
       path: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}/${{ inputs.OUTPUT_PATH }}/
