@@ -12,7 +12,7 @@ inputs:
   WORKING_DIRECTORY:
     description: 'working directory'
     required: true
-    default: ''
+    default: '.'
   BUCKET_NAME:
     description: 'bucket name'
     required: true
@@ -40,8 +40,8 @@ runs:
 
   - name: Authenticate with private NPM package
     run: |
-      echo "@entrecode:registry=https://npm.pkg.github.com/" > $GITHUB_WORKSPACE/.npmrc
-      echo "//npm.pkg.github.com/:_authToken=${{ inputs.PAT }}" > $GITHUB_WORKSPACE/.npmrc
+      echo "@entrecode:registry=https://npm.pkg.github.com/" > $GITHUB_WORKSPACE/$WORKING_DIRECTORY/.npmrc
+      echo "//npm.pkg.github.com/:_authToken=${{ inputs.PAT }}" > $GITHUB_WORKSPACE/$WORKING_DIRECTORY/.npmrc
     shell: bash
 
   - name: Install Dependencies
