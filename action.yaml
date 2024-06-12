@@ -40,8 +40,8 @@ runs:
 
   - name: Authenticate with private NPM package
     run: |
-      echo "@entrecode:registry=https://npm.pkg.github.com/" > .npmrc
-      echo "//npm.pkg.github.com/:_authToken=${{ inputs.PAT }}" > .npmrc
+      echo "@entrecode:registry=https://npm.pkg.github.com/" > ./.npmrc
+      echo "//npm.pkg.github.com/:_authToken=${{ inputs.PAT }}" > ./.npmrc
     working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
     shell: bash
 
