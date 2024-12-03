@@ -12,7 +12,7 @@ inputs:
   WORKING_DIRECTORY:
     description: 'working directory'
     required: true
-    default: '.'
+    default: ''
   BUCKET_NAME:
     description: 'bucket name'
     required: true
