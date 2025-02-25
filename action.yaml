@@ -51,24 +51,24 @@ runs:
     shell: bash
 
   - name: Build stage
-    if: github.ref == 'refs/heads/develop'
+    if: startsWith(github.ref, 'refs/tags/') != true
     id: build_stage
     env:
       NODE_OPTIONS: '--max_old_space_size=4096'
     run: |
-      npm run staging
+      npm run stage
       echo "bucket_name=${{ inputs.BUCKET_NAME }}-stage" >> $GITHUB_OUTPUT
 
     working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
     shell: bash
     
   - name: Build prod
-    if: github.ref != 'refs/heads/develop'
+    if: startsWith(github.ref, 'refs/tags/')
     id: build_prod
     env:
       NODE_OPTIONS: '--max_old_space_size=4096'
     run: |
-      npm run production
+      npm run prod
       echo "bucket_name=${{ inputs.BUCKET_NAME }}-prod" >> $GITHUB_OUTPUT
 
     working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
