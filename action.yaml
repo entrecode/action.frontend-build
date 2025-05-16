@@ -13,6 +13,10 @@ inputs:
     description: 'working directory'
     required: true
     default: ''
+  MONOREPO_MODE:
+    description: 'monorepo mode'
+    required: false
+    default: 'false'
   BUCKET_NAME:
     description: 'bucket name'
     required: true
@@ -42,12 +46,12 @@ runs:
     run: |
       echo "@entrecode:registry=https://npm.pkg.github.com/" > ./.npmrc
       echo "//npm.pkg.github.com/:_authToken=${{ inputs.PAT }}" > ./.npmrc
-    working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
+    working-directory: ${{ inputs.MONOREPO_MODE == 'true' && github.workspace || format('{0}/{1}', github.workspace, inputs.WORKING_DIRECTORY) }}
     shell: bash
 
   - name: Install Dependencies
     run: npm ci --prefer-offline --no-audit --quiet
-    working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
+    working-directory: ${{ inputs.MONOREPO_MODE == 'true' && github.workspace || format('{0}/{1}', github.workspace, inputs.WORKING_DIRECTORY) }}
     shell: bash
 
   - name: Build stage
