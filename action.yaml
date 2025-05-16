@@ -54,7 +54,7 @@ runs:
     if: startsWith(github.ref, 'refs/tags/') != true && startsWith(github.ref, 'refs/heads/release/') != true
     id: build_stage
     env:
-      NODE_OPTIONS: '--max_old_space_size=4096'
+      NODE_OPTIONS: '--max_old_space_size=8192'
     run: |
       npm run stage
       echo "bucket_name=${{ inputs.BUCKET_NAME }}-stage" >> $GITHUB_OUTPUT
@@ -66,7 +66,7 @@ runs:
     if: startsWith(github.ref, 'refs/heads/release/')
     id: build_staging
     env:
-      NODE_OPTIONS: '--max_old_space_size=4096'
+      NODE_OPTIONS: '--max_old_space_size=8192'
     run: |
       npm run staging
       echo "bucket_name=${{ inputs.BUCKET_NAME }}-staging" >> $GITHUB_OUTPUT
@@ -78,7 +78,7 @@ runs:
     if: startsWith(github.ref, 'refs/tags/')
     id: build_prod
     env:
-      NODE_OPTIONS: '--max_old_space_size=4096'
+      NODE_OPTIONS: '--max_old_space_size=8192'
     run: |
       npm run prod
       echo "bucket_name=${{ inputs.BUCKET_NAME }}-prod" >> $GITHUB_OUTPUT
