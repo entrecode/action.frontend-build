@@ -56,18 +56,18 @@ runs:
       files: 'pnpm-lock.*'
 
   - name: Install pnpm
-    if: steps.check_files_pnpm.outputs.found == 'true'
+    if: steps.check_files_pnpm.outputs.files_exists == 'true'
     run: pnpm install --frozen-lockfile --prefer-offline --reporter=silent
     shell: bash
 
   - name: Install Dependencies
-    if: steps.check_files_pnpm.outputs.found != 'true'
+    if: steps.check_files_pnpm.outputs.files_exists != 'true'
     run: npm ci --prefer-offline --no-audit --quiet
     working-directory: ${{ inputs.MONOREPO_MODE == 'true' && github.workspace || format('{0}/{1}', github.workspace, inputs.WORKING_DIRECTORY) }}
     shell: bash
 
   - name: Build stage with pnpm
-    if: steps.check_files_pnpm.outputs.found == 'true' && startsWith(github.ref, 'refs/tags/') != true && startsWith(github.ref, 'refs/heads/release/') != true
+    if: steps.check_files_pnpm.outputs.files_exists == 'true' && startsWith(github.ref, 'refs/tags/') != true && startsWith(github.ref, 'refs/heads/release/') != true
     id: build_stage_pnpm
     env:
       NODE_OPTIONS: '--max_old_space_size=8192'
@@ -77,7 +77,7 @@ runs:
     shell: bash
 
   - name: Build stage with npm
-    if: steps.check_files_pnpm.outputs.found != 'true' && startsWith(github.ref, 'refs/tags/') != true && startsWith(github.ref, 'refs/heads/release/') != true
+    if: steps.check_files_pnpm.outputs.files_exists != 'true' && startsWith(github.ref, 'refs/tags/') != true && startsWith(github.ref, 'refs/heads/release/') != true
     id: build_stage
     env:
       NODE_OPTIONS: '--max_old_space_size=8192'
@@ -89,7 +89,7 @@ runs:
     shell: bash
 
   - name: Build staging with pnpm
-    if: steps.check_files_pnpm.outputs.found == 'true' && startsWith(github.ref, 'refs/heads/release/')
+    if: steps.check_files_pnpm.outputs.files_exists == 'true' && startsWith(github.ref, 'refs/heads/release/')
     id: build_staging_pnpm
     env:
       NODE_OPTIONS: '--max_old_space_size=8192'
@@ -99,7 +99,7 @@ runs:
     shell: bash
 
   - name: Build staging with npm
-    if: steps.check_files_pnpm.outputs.found != 'true' && startsWith(github.ref, 'refs/heads/release/')
+    if: steps.check_files_pnpm.outputs.files_exists != 'true' && startsWith(github.ref, 'refs/heads/release/')
     id: build_staging
     env:
       NODE_OPTIONS: '--max_old_space_size=8192'
@@ -111,7 +111,7 @@ runs:
     shell: bash
 
   - name: Build prod with pnpm
-    if: steps.check_files_pnpm.outputs.found == 'true' && startsWith(github.ref, 'refs/tags/')
+    if: steps.check_files_pnpm.outputs.files_exists == 'true' && startsWith(github.ref, 'refs/tags/')
     id: build_prod_pnpm
     env:
       NODE_OPTIONS: '--max_old_space_size=8192'
@@ -121,7 +121,7 @@ runs:
     shell: bash
     
   - name: Build prod with npm
-    if: steps.check_files_pnpm.outputs.found != 'true' && startsWith(github.ref, 'refs/tags/')
+    if: steps.check_files_pnpm.outputs.files_exists != 'true' && startsWith(github.ref, 'refs/tags/')
     id: build_prod
     env:
       NODE_OPTIONS: '--max_old_space_size=8192'
