@@ -80,6 +80,7 @@ runs:
     run: |
       pnpm run stage
       echo "bucket_name=${{ inputs.BUCKET_NAME }}-stage" >> $GITHUB_OUTPUT
+    working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
     shell: bash
 
   - name: Build stage with npm
@@ -102,6 +103,7 @@ runs:
     run: |
       pnpm run staging
       echo "bucket_name=${{ inputs.BUCKET_NAME }}-staging" >> $GITHUB_OUTPUT
+    working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
     shell: bash
 
   - name: Build staging with npm
@@ -124,6 +126,7 @@ runs:
     run: |
       pnpm run prod
       echo "bucket_name=${{ inputs.BUCKET_NAME }}-prod" >> $GITHUB_OUTPUT
+    working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
     shell: bash
     
   - name: Build prod with npm
