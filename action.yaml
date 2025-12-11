@@ -55,11 +55,28 @@ runs:
     with:
       files: 'pnpm-lock.*'
 
-  # - name: check packageManager in package.json
-  #   if: steps.check_files_pnpm.outputs.files_exists == 'true'
-  #   run: |
-  #     echo "Checking packageManager field in package.json"
-  #   shell: bash
+  - name: check packageManager in package.json
+    if: steps.check_files_pnpm.outputs.files_exists == 'true'
+    run: |
+      set -euo pipefail
+
+      PACKAGE_MANAGER=$(jq -er '.packageManager' package.json) || {
+        echo "packageManager field missing in package.json"
+        echo "Add: \"packageManager\": \"pnpm@<version>\" and execute 'corepack use pnpm@latest-<version>' in terminal"
+        exit 1
+      }
+
+      if [[ ! "$PACKAGE_MANAGER" =~ ^pnpm@ ]]; then
+        echo "packageManager is set but not matching required pattern 'pnpm@...'"
+        echo "Current value: $PACKAGE_MANAGER"
+        echo "Expected: \"pnpm@<version>\""
+        echo "packageManager is set but not matching required pattern 'pnpm@...'"
+        echo "Add: \"packageManager\": \"pnpm@<version>\" and execute 'corepack use pnpm@latest-<version>' in terminal"
+        exit 1
+      fi
+
+      echo "✔ packageManager ok: $PACKAGE_MANAGER"
+    shell: bash
 
   - name: Setup pnpm
     if: steps.check_files_pnpm.outputs.files_exists == 'true'
