@@ -144,9 +144,17 @@ runs:
     run: echo "bucket_name=${{ steps.build_stage.outputs.bucket_name || steps.build_staging.outputs.bucket_name || steps.build_prod.outputs.bucket_name || steps.build_stage_pnpm.outputs.bucket_name || steps.build_staging_pnpm.outputs.bucket_name || steps.build_prod_pnpm.outputs.bucket_name }}" >> $GITHUB_OUTPUT
     shell: bash
 
-  # - name: Upload build artifact
-  #   uses: actions/upload-artifact@v5
-  #   with:
-  #     name: build_result
-  #     path: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}/${{ inputs.OUTPUT_PATH }}/
-  #     retention-days: 2
+  - name: check bucket_name
+    run: |
+      if [[ -z "${{ steps.bucket_name.outputs.bucket_name }}" ]]; then
+        echo "bucket_name input is required, it is currently empty"
+        exit 1
+      fi
+    shell: bash
+
+  - name: Upload build artifact
+    uses: actions/upload-artifact@v5
+    with:
+      name: build_result
+      path: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}/${{ inputs.OUTPUT_PATH }}/
+      retention-days: 2
