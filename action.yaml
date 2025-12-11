@@ -55,6 +55,12 @@ runs:
     with:
       files: 'pnpm-lock.*'
 
+  # - name: check packageManager in package.json
+  #   if: steps.check_files_pnpm.outputs.files_exists == 'true'
+  #   run: |
+  #     echo "Checking packageManager field in package.json"
+  #   shell: bash
+
   - name: Setup pnpm
     if: steps.check_files_pnpm.outputs.files_exists == 'true'
     uses: pnpm/action-setup@v4
@@ -141,7 +147,8 @@ runs:
 
   - name: Create Bucket Name Output
     id: bucket_name
-    run: echo "bucket_name=${{ steps.build_stage.outputs.bucket_name || steps.build_staging.outputs.bucket_name || steps.build_prod.outputs.bucket_name || steps.build_stage_pnpm.outputs.bucket_name || steps.build_staging_pnpm.outputs.bucket_name || steps.build_prod_pnpm.outputs.bucket_name }}" >> $GITHUB_OUTPUT
+    # run: echo "bucket_name=${{ steps.build_stage.outputs.bucket_name || steps.build_staging.outputs.bucket_name || steps.build_prod.outputs.bucket_name || steps.build_stage_pnpm.outputs.bucket_name || steps.build_staging_pnpm.outputs.bucket_name || steps.build_prod_pnpm.outputs.bucket_name }}" >> $GITHUB_OUTPUT
+    run: echo "bucket_name=${{ steps.build_stage.outputs.bucket_name || steps.build_staging.outputs.bucket_name || steps.build_prod.outputs.bucket_name }}" >> $GITHUB_OUTPUT
     shell: bash
 
   - name: check bucket_name
