@@ -147,8 +147,7 @@ runs:
 
   - name: Create Bucket Name Output
     id: bucket_name
-    # run: echo "bucket_name=${{ steps.build_stage.outputs.bucket_name || steps.build_staging.outputs.bucket_name || steps.build_prod.outputs.bucket_name || steps.build_stage_pnpm.outputs.bucket_name || steps.build_staging_pnpm.outputs.bucket_name || steps.build_prod_pnpm.outputs.bucket_name }}" >> $GITHUB_OUTPUT
-    run: echo "bucket_name=${{ steps.build_stage.outputs.bucket_name || steps.build_staging.outputs.bucket_name || steps.build_prod.outputs.bucket_name }}" >> $GITHUB_OUTPUT
+    run: echo "bucket_name=${{ steps.build_stage.outputs.bucket_name || steps.build_staging.outputs.bucket_name || steps.build_prod.outputs.bucket_name || steps.build_stage_pnpm.outputs.bucket_name || steps.build_staging_pnpm.outputs.bucket_name || steps.build_prod_pnpm.outputs.bucket_name }}" >> $GITHUB_OUTPUT
     shell: bash
 
   - name: check bucket_name
