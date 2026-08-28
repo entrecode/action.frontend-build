@@ -35,7 +35,24 @@ runs:
   steps:
   - name: Checkout code
     uses: actions/checkout@v6
-
+  
+  - name: Determine version and git sha
+    run: |
+      set -euo pipefail
+      if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+        VERSION=$(jq -er '.version' package.json)
+      elif [[ "${GITHUB_REF}" == refs/heads/release/* ]]; then
+        VERSION=staging
+      else
+        VERSION="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+      fi
+      echo "VERSION=$VERSION"                    >> $GITHUB_ENV
+      echo "GIT_SHA=${{ github.sha }}"           >> $GITHUB_ENV
+      echo "VITE_VERSION=$VERSION"               >> $GITHUB_ENV
+      echo "VITE_GIT_SHA=${{ github.sha }}"      >> $GITHUB_ENV
+    working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
+    shell: bash
+    
   - name: Use Node.js ${{ inputs.NODE_VERSION }}
     uses: actions/setup-node@v6
     with:
@@ -173,6 +190,14 @@ runs:
         echo "bucket_name input is required, it is currently empty"
         exit 1
       fi
+    shell: bash
+
+  - name: Write version.json to build output
+    run: |
+      set -euo pipefail
+      printf '{"version":"%s","gitSha":"%s"}\n' "$VERSION" "$GIT_SHA" > "${{ inputs.OUTPUT_PATH }}/version.json"
+      cat "${{ inputs.OUTPUT_PATH }}/version.json"
+    working-directory: ${{ github.workspace }}/${{ inputs.WORKING_DIRECTORY }}
     shell: bash
 
   - name: Upload build artifact
